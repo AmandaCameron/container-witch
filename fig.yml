@@ -1,0 +1,7 @@
+main:
+  build: .
+  volumes:
+    - 'data/config:/config'
+    - 'src:/code/src'
+    - 'test.yml:/config.yml'
+    - '/var/run/docker.sock:/docker.sock'

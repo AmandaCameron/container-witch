@@ -1,0 +1,5 @@
+devtools-ddna:
+  image: repo.darkdna.net/apps/devtools:latest
+  http:
+    port: 8000
+    host: devtools.darkdna.net
