@@ -19,6 +19,11 @@ c = docker.Client(base_url="unix://docker.sock")
 #tls_config = docker.tls.TLSConfig(verify=False)
 #c = docker.Client(base_url='https://172.17.42.1:2376', tls=tls_config)
 
+try:
+	os.mkdir("/config/nginx")
+except:
+	pass
+
 def gen_configs(config, container):
 	if 'http' in config:
 		for port in container['Ports']:
