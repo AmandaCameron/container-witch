@@ -46,7 +46,10 @@ def gen_nginx(config, host_port):
 def remove_nginx(config):
 	print '  Removing: Nginx'
 
-	os.unlink('/config/nginx/%s.conf' % config['http']['host'])
+	try:
+		os.unlink('/config/nginx/%s.conf' % config['http']['host'])
+	except OSError:
+		pass
 
 def remove_configs(config):
 	if 'http' in config:
@@ -76,7 +79,7 @@ while True:
 			running[container['Image']] = container['Id']
 
 	for img in last_running.iterkeys():
-		if img not in running:
+		if img not in running or last_running[img] != running[img]:
 			print 'Image went away:', img
 
 			remove_configs(imgs[img])
