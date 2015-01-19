@@ -16,8 +16,6 @@ lookup = TemplateLookup(
 )
 
 c = docker.Client(base_url="unix://docker.sock")
-#tls_config = docker.tls.TLSConfig(verify=False)
-#c = docker.Client(base_url='https://172.17.42.1:2376', tls=tls_config)
 
 try:
 	os.mkdir("/config/nginx")
@@ -25,9 +23,9 @@ except:
 	pass
 
 def gen_configs(config, container):
-	if 'http' in config:
+	if 'nginx' in config:
 		for port in container['Ports']:
-			if port['PrivatePort'] == config['http']['port']:
+			if port['PrivatePort'] == config['nginx']['port']:
 				gen_nginx(config, port['PublicPort'])
 
 				break
@@ -35,11 +33,11 @@ def gen_configs(config, container):
 def gen_nginx(config, host_port):
 	print '  Generating: Nginx'
 
-	f = open('/config/nginx/%s.conf' % config['http']['host'], 'w')
+	f = open('/config/nginx/%s.conf' % config['nginx']['host'], 'w')
 
 	templ = lookup.get_template('nginx.mako')
 
-	f.write(templ.render(config=config['http'], port=host_port))
+	f.write(templ.render(host=config['nginx']['host'], port=host_port))
 
 	f.close()
 
@@ -47,12 +45,12 @@ def remove_nginx(config):
 	print '  Removing: Nginx'
 
 	try:
-		os.unlink('/config/nginx/%s.conf' % config['http']['host'])
+		os.unlink('/config/nginx/%s.conf' % config['nginx']['host'])
 	except OSError:
 		pass
 
 def remove_configs(config):
-	if 'http' in config:
+	if 'nginx' in config:
 		remove_nginx(config)
 
 last_running = {}
